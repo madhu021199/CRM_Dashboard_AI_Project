@@ -1,4 +1,4 @@
-package Steps;
+package steps;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -14,6 +14,9 @@ import java.util.List;
 public class login_steps {
     private WebDriver driver;
     private String previousPasswordType;
+
+    public login_steps() {
+    }
 
     public login_steps(WebDriver driver) {
         this.driver = driver;
