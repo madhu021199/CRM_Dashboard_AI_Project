@@ -41,8 +41,8 @@ pipeline {
         // 2. Install dependencies
         stage('Install dependencies') {
             steps {
-                sh '''
-                    node -v || echo "Node not found - install it on the Jenkins agent"
+                bat '''
+                    node -v
                     npm install
                     npm install -g newman newman-reporter-htmlextra
                 '''
@@ -52,9 +52,9 @@ pipeline {
         // 3. Run Selenium suite (headless, parallel where possible)
         stage('Run Selenium suite') {
             steps {
-                sh '''
-                    # Example for a Maven/TestNG Selenium project running headless & in parallel.
-                    # Adjust to your actual test runner (pytest, Mocha, TestNG, JUnit, etc.)
+                bat '''
+                    REM Example for a Maven/TestNG Selenium project running headless & in parallel.
+                    REM Adjust to your actual test runner (pytest, Mocha, TestNG, JUnit, etc.)
                     mvn -B -Dheadless=true -DthreadCount=4 -Dparallel=methods test
                 '''
             }
@@ -68,11 +68,11 @@ pipeline {
         // 4. Run Postman suite via Newman
         stage('Run Postman suite (Newman)') {
             steps {
-                sh '''
-                    newman run "$POSTMAN_COLLECTION" \
-                        -e "$POSTMAN_ENV" \
-                        --reporters cli,junit,htmlextra \
-                        --reporter-junit-export newman/report.xml \
+                bat '''
+                    newman run "%POSTMAN_COLLECTION%" ^
+                        -e "%POSTMAN_ENV%" ^
+                        --reporters cli,junit,htmlextra ^
+                        --reporter-junit-export newman/report.xml ^
                         --reporter-htmlextra-export newman/report.html
                 '''
             }
