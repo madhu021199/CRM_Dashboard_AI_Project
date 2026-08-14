@@ -9,7 +9,6 @@ public class login_base {
     public void initializeDriver() {
         driver = new ChromeDriver();
         driver.manage().window().maximize();
-        System.out.println("Driver initialized and window maximized.");
     }
 
     public WebDriver getDriver() {
