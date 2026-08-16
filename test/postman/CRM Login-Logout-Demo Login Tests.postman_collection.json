@@ -1,0 +1,330 @@
+{
+  "info": {
+    "_postman_id": "ee082fc2-e5d0-4776-88fc-2f26092e95ed",
+    "name": "CRM Login/Logout/Demo Login Tests",
+    "description": "Test suite covering CRM login page load, valid login, logout & session termination, and Demo/Staff login flows.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "19800775"
+  },
+  "item": [
+    {
+      "name": "1. Login Page Load",
+      "item": [
+        {
+          "name": "GET Login Page / Health Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response time is acceptable', () => {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});",
+                  "",
+                  "pm.test('Content-Type header is present', () => {",
+                  "    pm.response.to.have.header('Content-Type');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Valid Login Flow",
+      "item": [
+        {
+          "name": "POST Login - Valid Credentials",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "let jsonData;",
+                  "pm.test('Response is valid JSON', () => {",
+                  "    jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('object');",
+                  "});",
+                  "",
+                  "pm.test('Auth token is present and valid', () => {",
+                  "    pm.expect(jsonData.token).to.not.be.undefined;",
+                  "    pm.expect(jsonData.token).to.not.be.empty;",
+                  "    pm.collectionVariables.set('authToken', jsonData.token);",
+                  "});",
+                  "",
+                  "pm.test('Token looks like a JWT', () => {",
+                  "    pm.expect(jsonData.token).to.match(/^[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+$/);",
+                  "});",
+                  "",
+                  "pm.test('Username matches logged-in user', () => {",
+                  "    pm.expect(jsonData.username).to.eql(pm.collectionVariables.get('username'));",
+                  "});",
+                  "",
+                  "pm.test('Role field is present', () => {",
+                  "    pm.expect(jsonData.role).to.not.be.undefined;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "html"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Dashboard - After Valid Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "let jsonData;",
+                  "pm.test('Response is valid JSON', () => {",
+                  "    jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('object');",
+                  "});",
+                  "",
+                  "pm.test('Dashboard contains expected stat fields', () => {",
+                  "    pm.expect(jsonData.totalUsers).to.not.be.undefined;",
+                  "    pm.expect(jsonData.opportunity).to.not.be.undefined;",
+                  "    pm.expect(jsonData.contact).to.not.be.undefined;",
+                  "    pm.expect(jsonData.company).to.not.be.undefined;",
+                  "});",
+                  "",
+                  "pm.test('totalUsers count is a number', () => {",
+                  "    pm.expect(jsonData.totalUsers.count).to.be.a('number');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/crm-dashboard?startDate=2025-12-31&endDate=2026-12-30",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "crm-dashboard"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2025-12-31"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2026-12-30"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Login - Invalid Credentials (Negative)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 401 for invalid credentials', () => {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test('No token returned', () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.token).to.be.undefined;",
+                  "});",
+                  "",
+                  "pm.test('Error message present', () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message || jsonData.error).to.not.be.undefined;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{invalidUsername}}\",\n  \"password\": \"{{invalidPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "basic"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://your-crm-app.com/api"
+    },
+    {
+      "key": "username",
+      "value": "valid_user"
+    },
+    {
+      "key": "password",
+      "value": "valid_pass"
+    },
+    {
+      "key": "invalidUsername",
+      "value": "wrong_user"
+    },
+    {
+      "key": "invalidPassword",
+      "value": "wrong_pass"
+    },
+    {
+      "key": "authToken",
+      "secret": true
+    },
+    {
+      "key": "demoToken",
+      "value": ""
+    },
+    {
+      "key": "staffToken",
+      "value": ""
+    }
+  ]
+}

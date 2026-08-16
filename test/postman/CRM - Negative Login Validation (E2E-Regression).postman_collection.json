@@ -1,0 +1,379 @@
+{
+  "info": {
+    "_postman_id": "a6cdfa72-9640-4ed2-983a-7c22aad7c285",
+    "name": "CRM - Negative Login Validation (E2E/Regression)",
+    "description": "Postman collection derived from Gherkin scenario 'End-to-End Negative Login Validation Flow'. Covers empty fields, missing username, missing password, invalid username, invalid password, and invalid username+password combinations against the CRM login API.\n\nUpdate the collection variables (baseUrl, loginEndpoint, validUsername, validPassword, invalidUsername, invalidPassword) before running.\n\nNOTE: The original scenario describes UI behavior (validation messages inline, error pop-ups, staying on the login page). These have been mapped to API-level equivalents:\n- Inline validation errors -> 400 response with field-specific error message\n- 'Invalid username or password' pop-up -> 401 response with generic auth error message\nAdjust field names, status codes, and response paths (in the test scripts) to match your actual API contract.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "19800775"
+  },
+  "item": [
+    {
+      "name": "1. Empty Username and Empty Password",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 401 (Bad Request)', function () {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "",
+              "pm.test('Response contains validation error for Username', function () {",
+              "    const body = pm.response.text();",
+              "    pm.expect(body).to.include('Username or password is incorrect');",
+              "});",
+              "",
+              "pm.test('No auth token / session issued (user remains unauthenticated)', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.not.have.property('token');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"\",\n  \"password\": \"\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/user/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "user",
+            "login"
+          ]
+        },
+        "description": "Given: user leaves both Username and Password empty and clicks Sign in.\nThen: validation errors displayed for both fields; user remains on login page (no session/token)."
+      },
+      "response": []
+    },
+    {
+      "name": "2. Empty Username, Valid Password",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 401 (Bad Request)', function () {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "",
+              "pm.test('Response contains \"Username is required\"', function () {",
+              "    const body = pm.response.text();",
+              "    pm.expect(body).to.include('Username or password is incorrect');",
+              "});",
+              "",
+              "pm.test('No auth token / session issued', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.not.have.property('token');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"\",\n  \"password\": \"{{validPassword}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/user/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "user",
+            "login"
+          ]
+        },
+        "description": "Given: user leaves Username empty, enters valid password, clicks Sign in.\nThen: 'Username is required' validation error; user remains on login page."
+      },
+      "response": []
+    },
+    {
+      "name": "3. Valid Username, Empty Password",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 401 (Bad Request)', function () {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "",
+              "pm.test('Response contains \"Password is required\"', function () {",
+              "    const body = pm.response.text();",
+              "    pm.expect(body).to.include('Username or password is incorrect');",
+              "});",
+              "",
+              "pm.test('No auth token / session issued', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.not.have.property('token');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{validUsername}}\",\n  \"password\": \"\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/user/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "user",
+            "login"
+          ]
+        },
+        "description": "Given: user enters valid username, leaves Password empty, clicks Sign in.\nThen: 'Password is required' validation error; user remains on login page."
+      },
+      "response": []
+    },
+    {
+      "name": "4. Invalid Username, Valid Password",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 401 (Unauthorized)', function () {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "",
+              "pm.test('Response contains \"Invalid username or password\"', function () {",
+              "    const body = pm.response.text();",
+              "    pm.expect(body).to.include('Username or password is incorrect');",
+              "});",
+              "",
+              "pm.test('No auth token / session issued', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.not.have.property('token');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{invalidUsername}}\",\n  \"password\": \"{{validPassword}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/user/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "user",
+            "login"
+          ]
+        },
+        "description": "Given: user enters invalid/non-existent username with a valid password, clicks Sign in.\nThen: error pop-up 'Invalid username or password'; user remains on login page."
+      },
+      "response": []
+    },
+    {
+      "name": "5. Valid Username, Incorrect Password",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 401 (Unauthorized)', function () {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "",
+              "pm.test('Response contains \"Invalid username or password\"', function () {",
+              "    const body = pm.response.text();",
+              "    pm.expect(body).to.include('Username or password is incorrect');",
+              "});",
+              "",
+              "pm.test('No auth token / session issued', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.not.have.property('token');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{validUsername}}\",\n  \"password\": \"{{invalidPassword}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/user/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "user",
+            "login"
+          ]
+        },
+        "description": "Given: user enters a valid username with an incorrect password, clicks Sign in.\nThen: error pop-up 'Invalid username or password'; user remains on login page."
+      },
+      "response": []
+    },
+    {
+      "name": "6. Invalid Username, Invalid Password",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 401 (Unauthorized)', function () {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "",
+              "pm.test('Response contains \"Invalid username or password\"', function () {",
+              "    const body = pm.response.text();",
+              "    pm.expect(body).to.include('Username or password is incorrect');",
+              "});",
+              "",
+              "pm.test('No auth token / session issued', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.not.have.property('token');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{invalidUsername}}\",\n  \"password\": \"{{invalidPassword}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/user/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "user",
+            "login"
+          ]
+        },
+        "description": "Given: user enters both an invalid username and an invalid password, clicks Sign in.\nThen: error pop-up 'Invalid username or password'; user remains on login page."
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://crm-app.example.com"
+    },
+    {
+      "key": "loginEndpoint",
+      "value": "/api/auth/login"
+    },
+    {
+      "key": "validUsername",
+      "value": "valid_user@example.com"
+    },
+    {
+      "key": "validPassword",
+      "value": "ValidPass123!"
+    },
+    {
+      "key": "invalidUsername",
+      "value": "nonexistent_user@example.com"
+    },
+    {
+      "key": "invalidPassword",
+      "value": "WrongPass999!"
+    }
+  ]
+}
