@@ -353,7 +353,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "https://crm-app.example.com"
+      "value": "https://api.crm.osllc.us"
     },
     {
       "key": "loginEndpoint",
@@ -361,11 +361,11 @@
     },
     {
       "key": "validUsername",
-      "value": "valid_user@example.com"
+      "value": "demo"
     },
     {
       "key": "validPassword",
-      "value": "ValidPass123!"
+      "value": "5555"
     },
     {
       "key": "invalidUsername",

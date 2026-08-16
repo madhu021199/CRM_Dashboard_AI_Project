@@ -296,23 +296,23 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "https://your-crm-app.com/api"
+      "value": "https://api.crm.osllc.us"
     },
     {
       "key": "username",
-      "value": "valid_user"
+      "value": "demo"
     },
     {
       "key": "password",
-      "value": "valid_pass"
+      "value": "5555"
     },
     {
       "key": "invalidUsername",
-      "value": "wrong_user"
+      "value": "demo"
     },
     {
       "key": "invalidPassword",
-      "value": "wrong_pass"
+      "value": "invalid_pw"
     },
     {
       "key": "authToken",
