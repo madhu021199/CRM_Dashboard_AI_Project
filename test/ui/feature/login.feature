@@ -41,10 +41,8 @@ Feature: CRM Login and Logout
     Given the user is on the CRM login page
     When the user enters a SQL injection payload (e.g. ' OR '1'='1) in the Username or Password field and clicks "Sign in"
     Then the system should reject the input and show an "Invalid username or password" error
-    #And no unauthorized access or database error should occur
     When the user enters a script tag (e.g. <script>alert('xss')</script>) into the Username field and clicks "Sign in"
     Then the input should be sanitized or rejected
-    #And no script execution should occur
     When the user enters the correct username/password with different letter casing (e.g. "DEMO" instead of "demo") and clicks "Sign in"
     Then the system should behave per the defined case-sensitivity rule (login successfully if case-insensitive, or show an invalid credentials error if case-sensitive)
     When the user enters an extremely long string (500+ characters) into the Username or Password field and clicks "Sign in"
