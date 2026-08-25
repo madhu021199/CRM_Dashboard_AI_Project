@@ -23,9 +23,6 @@ Feature: CRM Login and Logout
     When the user leaves the Username field empty, enters a valid password, and clicks "Sign in"
     Then a validation error message "Username is required" should be displayed
     And the user should remain on the login page
-    #When the user enters a valid username, leaves the Password field empty, and clicks "Sign in"
-    #Then a validation error message "Password is required" should be displayed
-    #And the user should remain on the login page
     When the user enters an invalid/non-existent username with a valid password and clicks "Sign in"
     Then an error pop-up with message "Invalid username or password" should be displayed
     And the user should remain on the login page
