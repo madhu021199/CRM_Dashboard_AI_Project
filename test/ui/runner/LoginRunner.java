@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = "test/ui/feature/login.feature",
+        features = "test/ui/feature",
         glue = {"steps"},
         plugin = {
                 "pretty",
@@ -17,5 +17,5 @@ import org.junit.runner.RunWith;
         },
         monochrome = true
 )
-public class loginRunner {
+public class LoginRunner {
 }
