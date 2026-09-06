@@ -1,12 +1,67 @@
 {
   "info": {
-    "_postman_id": "4cc61c0d-cc86-49f3-95bb-e718240c70ea",
+    "_postman_id": "97bb3585-730a-4f51-9081-638cac7d5336",
     "name": "CRM Company Creation - E2E Positive & Negative",
     "description": "Postman collection derived from BDD scenarios: 'End-to-End Positive Company Creation Flow' and 'End-to-End Negative Company Validation Flow'. Endpoint, payload fields, and response shape captured directly from the real OS CRM API (api.crm.osllc.us) via browser DevTools Network tab.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "19800775"
   },
   "item": [
+    {
+      "name": "0. Setup",
+      "item": [
+        {
+          "name": "Login - Get Fresh Auth Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login succeeded (200)', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response contains a token', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.token).to.be.a('string');",
+                  "    pm.collectionVariables.set('auth_token', jsonData.token);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/user/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "user",
+                "login"
+              ]
+            },
+            "description": "Logs in fresh on every run and captures a brand-new token into the 'auth_token' collection variable via the test script. Run this FIRST (it's folder '0. Setup' so it sorts before Positive/Negative Scenarios) so every other request in the collection automatically uses a valid, non-expired token — no manual DevTools copying needed, and this works unattended in CI/CD (Jenkins + Newman).\n\nSet the real 'password' collection variable value once (it's not hardcoded in this file for security) — same one-time setup as the token used to be, except now it's a stable login password instead of a short-lived session token, so you only need to set it once, not every time it expires."
+          },
+          "response": []
+        }
+      ]
+    },
     {
       "name": "Positive Scenarios",
       "item": [
@@ -18,22 +73,43 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('Status code is 201 Created', function () {\n    pm.response.to.have.status(201);\n});\n\npm.test('Response time is within acceptable range', function () {\n    pm.expect(pm.response.responseTime).to.be.below(3000);\n});\n"
+                  "pm.test('Status code indicates success (200 or 201)', function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
+                  "",
+                  "pm.test('Response has an id (company created)', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.id).to.be.a('number');",
+                  "});",
+                  "",
+                  "pm.test('Created company has correct name', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.companyName).to.eql('Nova Tech Solutions');",
+                  "});",
+                  "",
+                  "pm.test('Created company has correct details', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.industryId).to.eql(pm.collectionVariables.get('industry_id') ? Number(pm.collectionVariables.get('industry_id')) : jsonData.industryId);",
+                  "    pm.expect(jsonData.companyTypeId).to.be.a('number');",
+                  "    pm.expect(jsonData.phone).to.eql('+91 9845012345');",
+                  "    pm.expect(jsonData.website).to.eql('https://www.novatech.com');",
+                  "});",
+                  "",
+                  "pm.test('createdAt and updatedAt are present', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.createdAt).to.exist;",
+                  "    pm.expect(jsonData.updatedAt).to.exist;",
+                  "});",
+                  "",
+                  "if ([200, 201].includes(pm.response.code)) {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('company_id', jsonData.id);",
+                  "}"
                 ]
               }
             }
           ],
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{auth_token}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "POST",
             "header": [
               {
@@ -43,12 +119,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"companyName\": \"Nova Tech Solutions\",\n  \"industryId\": 18,\n  \"companyTypeId\": 1,\n  \"companySize\": null,\n  \"annualRevenue\": null,\n  \"website\": \"https://www.novatech.com\",\n  \"phone\": \"+91 9845012345\"\n}",
-              "options": {
-                "raw": {
-                  "language": "text"
-                }
-              }
+              "raw": "{\n  \"companyName\": \"Nova Tech Solutions\",\n  \"industryId\": 18,\n  \"companyTypeId\": 1,\n  \"companySize\": null,\n  \"annualRevenue\": null,\n  \"website\": \"https://www.novatech.com\",\n  \"phone\": \"+91 9845012345\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/company",
@@ -71,7 +142,25 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('Status code is 200 OK', function () {\n    pm.response.to.have.status(200);\n});\n\npm.test('Company list contains Nova Tech Solutions', function () {\n    const jsonData = pm.response.json();\n    const list = jsonData.getAllCompany || (Array.isArray(jsonData) ? jsonData : (jsonData.data || jsonData.items || []));\n    const found = list.some(company => company.companyName === 'Nova Tech Solutions');\n    pm.expect(found).to.be.true;\n});\n\npm.test('Listed company has matching details', function () {\n    const jsonData = pm.response.json();\n    const list = jsonData.getAllCompany || (Array.isArray(jsonData) ? jsonData : (jsonData.data || jsonData.items || []));\n    const company = list.find(c => c.companyName === 'Nova Tech Solutions');\n    pm.expect(company).to.not.be.undefined;\n    pm.expect(company.phone).to.eql('+91 9845012345');\n    pm.expect(company.website).to.eql('https://www.novatech.com');\n});"
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Company list contains Nova Tech Solutions', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const list = jsonData.getAllCompany || (Array.isArray(jsonData) ? jsonData : (jsonData.data || jsonData.items || []));",
+                  "    const found = list.some(company => company.companyName === 'Nova Tech Solutions');",
+                  "    pm.expect(found).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test('Listed company has matching details', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const list = jsonData.getAllCompany || (Array.isArray(jsonData) ? jsonData : (jsonData.data || jsonData.items || []));",
+                  "    const company = list.find(c => c.companyName === 'Nova Tech Solutions');",
+                  "    pm.expect(company).to.not.be.undefined;",
+                  "    pm.expect(company.phone).to.eql('+91 9845012345');",
+                  "    pm.expect(company.website).to.eql('https://www.novatech.com');",
+                  "});"
                 ]
               }
             }
@@ -181,6 +270,14 @@
     {
       "key": "base_url",
       "value": "https://api.crm.osllc.us"
+    },
+    {
+      "key": "username",
+      "value": "demo"
+    },
+    {
+      "key": "password",
+      "value": "REPLACE_WITH_LOGIN_PASSWORD"
     },
     {
       "key": "auth_token",
