@@ -277,7 +277,7 @@
     },
     {
       "key": "password",
-      "value": "REPLACE_WITH_LOGIN_PASSWORD"
+      "value": "5555"
     },
     {
       "key": "auth_token",
