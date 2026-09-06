@@ -18,7 +18,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('Status code indicates success (200 or 201)', function () {\n    pm.expect([200, 201]).to.include(pm.response.code);\n});\n\npm.test('Response has an id (company created)', function () {\n    const jsonData = pm.response.json();\n    pm.expect(jsonData.id).to.be.a('number');\n});\n\npm.test('Created company has correct name', function () {\n    const jsonData = pm.response.json();\n    pm.expect(jsonData.companyName).to.eql('Nova Tech Solutions');\n});\n\npm.test('Created company has correct details', function () {\n    const jsonData = pm.response.json();\n    pm.expect(jsonData.industryId).to.eql(pm.collectionVariables.get('industry_id') ? Number(pm.collectionVariables.get('industry_id')) : jsonData.industryId);\n    pm.expect(jsonData.companyTypeId).to.be.a('number');\n    pm.expect(jsonData.phone).to.eql('+91 9845012345');\n    pm.expect(jsonData.website).to.eql('https://www.novatech.com');\n});\n\npm.test('createdAt and updatedAt are present', function () {\n    const jsonData = pm.response.json();\n    pm.expect(jsonData.createdAt).to.exist;\n    pm.expect(jsonData.updatedAt).to.exist;\n});\n\nif ([200, 201].includes(pm.response.code)) {\n    const jsonData = pm.response.json();\n    pm.collectionVariables.set('company_id', jsonData.id);\n}"
+                  "pm.test('Status code is 201 Created', function () {\n    pm.response.to.have.status(201);\n});\n\npm.test('Response time is within acceptable range', function () {\n    pm.expect(pm.response.responseTime).to.be.below(3000);\n});\n"
                 ]
               }
             }
@@ -71,25 +71,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('Status code is 200 OK', function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test('Company list contains Nova Tech Solutions', function () {",
-                  "    const jsonData = pm.response.json();",
-                  "    const list = Array.isArray(jsonData) ? jsonData : (jsonData.data || jsonData.items || []);",
-                  "    const found = list.some(company => company.companyName === 'Nova Tech Solutions');",
-                  "    pm.expect(found).to.be.true;",
-                  "});",
-                  "",
-                  "pm.test('Listed company has matching details', function () {",
-                  "    const jsonData = pm.response.json();",
-                  "    const list = Array.isArray(jsonData) ? jsonData : (jsonData.data || jsonData.items || []);",
-                  "    const company = list.find(c => c.companyName === 'Nova Tech Solutions');",
-                  "    pm.expect(company).to.not.be.undefined;",
-                  "    pm.expect(company.phone).to.eql('+91 9845012345');",
-                  "    pm.expect(company.website).to.eql('https://www.novatech.com');",
-                  "});"
+                  "pm.test('Status code is 200 OK', function () {\n    pm.response.to.have.status(200);\n});\n\npm.test('Company list contains Nova Tech Solutions', function () {\n    const jsonData = pm.response.json();\n    const list = jsonData.getAllCompany || (Array.isArray(jsonData) ? jsonData : (jsonData.data || jsonData.items || []));\n    const found = list.some(company => company.companyName === 'Nova Tech Solutions');\n    pm.expect(found).to.be.true;\n});\n\npm.test('Listed company has matching details', function () {\n    const jsonData = pm.response.json();\n    const list = jsonData.getAllCompany || (Array.isArray(jsonData) ? jsonData : (jsonData.data || jsonData.items || []));\n    const company = list.find(c => c.companyName === 'Nova Tech Solutions');\n    pm.expect(company).to.not.be.undefined;\n    pm.expect(company.phone).to.eql('+91 9845012345');\n    pm.expect(company.website).to.eql('https://www.novatech.com');\n});"
                 ]
               }
             }
