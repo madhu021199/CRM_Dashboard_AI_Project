@@ -1,0 +1,212 @@
+{
+  "info": {
+    "_postman_id": "4cc61c0d-cc86-49f3-95bb-e718240c70ea",
+    "name": "CRM Company Creation - E2E Positive & Negative",
+    "description": "Postman collection derived from BDD scenarios: 'End-to-End Positive Company Creation Flow' and 'End-to-End Negative Company Validation Flow'. Endpoint, payload fields, and response shape captured directly from the real OS CRM API (api.crm.osllc.us) via browser DevTools Network tab.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "19800775"
+  },
+  "item": [
+    {
+      "name": "Positive Scenarios",
+      "item": [
+        {
+          "name": "Create Company - Valid Data (Nova Tech Solutions)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code indicates success (200 or 201)', function () {\n    pm.expect([200, 201]).to.include(pm.response.code);\n});\n\npm.test('Response has an id (company created)', function () {\n    const jsonData = pm.response.json();\n    pm.expect(jsonData.id).to.be.a('number');\n});\n\npm.test('Created company has correct name', function () {\n    const jsonData = pm.response.json();\n    pm.expect(jsonData.companyName).to.eql('Nova Tech Solutions');\n});\n\npm.test('Created company has correct details', function () {\n    const jsonData = pm.response.json();\n    pm.expect(jsonData.industryId).to.eql(pm.collectionVariables.get('industry_id') ? Number(pm.collectionVariables.get('industry_id')) : jsonData.industryId);\n    pm.expect(jsonData.companyTypeId).to.be.a('number');\n    pm.expect(jsonData.phone).to.eql('+91 9845012345');\n    pm.expect(jsonData.website).to.eql('https://www.novatech.com');\n});\n\npm.test('createdAt and updatedAt are present', function () {\n    const jsonData = pm.response.json();\n    pm.expect(jsonData.createdAt).to.exist;\n    pm.expect(jsonData.updatedAt).to.exist;\n});\n\nif ([200, 201].includes(pm.response.code)) {\n    const jsonData = pm.response.json();\n    pm.collectionVariables.set('company_id', jsonData.id);\n}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companyName\": \"Nova Tech Solutions\",\n  \"industryId\": 18,\n  \"companyTypeId\": 1,\n  \"companySize\": null,\n  \"annualRevenue\": null,\n  \"website\": \"https://www.novatech.com\",\n  \"phone\": \"+91 9845012345\"\n}",
+              "options": {
+                "raw": {
+                  "language": "text"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/company",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "company"
+              ]
+            },
+            "description": "Corresponds to: entering Company Information (Name, Industry, Company Type, Website, Phone), proceeding through Billing Information step, and submitting to create the company.\n\nNOTE: industryId 18 and companyTypeId 1 were captured from a live test ('Information Technology' / a sample type) in this CRM instance's dropdowns. If your instance's IDs differ for 'Information Technology and Services' / 'Private', look them up via the industry/company-type list endpoints (seen in your Network tab as 'industry?query=all' and 'company-type?query=all') and update these values."
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Company Appears in Company List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Company list contains Nova Tech Solutions', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const list = Array.isArray(jsonData) ? jsonData : (jsonData.data || jsonData.items || []);",
+                  "    const found = list.some(company => company.companyName === 'Nova Tech Solutions');",
+                  "    pm.expect(found).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test('Listed company has matching details', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const list = Array.isArray(jsonData) ? jsonData : (jsonData.data || jsonData.items || []);",
+                  "    const company = list.find(c => c.companyName === 'Nova Tech Solutions');",
+                  "    pm.expect(company).to.not.be.undefined;",
+                  "    pm.expect(company.phone).to.eql('+91 9845012345');",
+                  "    pm.expect(company.website).to.eql('https://www.novatech.com');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/company?status=true&page=1&count=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "company"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "true"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "count",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Corresponds to: 'Nova Tech Solutions' appears in the Company list on the Company page with the details entered.\n\nNOTE: this is the same listing endpoint your app calls to load the grid (captured from your Network tab). It doesn't support a 'search' query param directly in what was observed — the test script scans the returned page for the match instead. If your list is paginated and Nova Tech Solutions isn't on page 1, increase 'count' or loop through pages."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Negative Scenarios",
+      "item": [
+        {
+          "name": "Create Company - Missing Company Name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code indicates validation failure (400 or 422)', function () {",
+                  "    pm.expect([400, 422]).to.include(pm.response.code);",
+                  "});",
+                  "",
+                  "pm.test('Response body indicates a validation error', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const bodyStr = JSON.stringify(jsonData).toLowerCase();",
+                  "    pm.expect(bodyStr).to.satisfy(str =>",
+                  "        str.includes('companyname') || str.includes('company name') || str.includes('required'),",
+                  "    'Expected error response to reference the missing companyName field');",
+                  "});",
+                  "",
+                  "pm.test('Company is not created (no id returned)', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.id).to.be.undefined;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companyName\": \"\",\n  \"industryId\": 18,\n  \"companyTypeId\": 1,\n  \"companySize\": null,\n  \"annualRevenue\": null,\n  \"website\": \"\",\n  \"phone\": \"9845012345\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/company",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "company"
+              ]
+            },
+            "description": "Corresponds to: clicking 'Next' without entering a Company Name -> mandatory field validation error for 'Company Name', form not submitted.\n\nNOTE: I haven't seen this API's actual validation-error response shape yet (only the success response was captured). Submit this request once in Postman, check the real error JSON structure, and tighten the 'Validation error' test above to check the exact field/message path instead of a generic string search."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://api.crm.osllc.us"
+    },
+    {
+      "key": "auth_token",
+      "value": ""
+    },
+    {
+      "key": "company_id",
+      "value": ""
+    }
+  ]
+}

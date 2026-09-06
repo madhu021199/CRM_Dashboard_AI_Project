@@ -1,9 +1,6 @@
 package steps;
 
-import base.login_base;
-import io.cucumber.java.After;
 import io.cucumber.java.Before;
-import io.cucumber.java.Scenario;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -12,21 +9,11 @@ import org.junit.Assert;
 import page.login_imp;
 
 public class login_steps {
-    private login_base base;
     private login_imp loginPage;
 
-    @Before
-    public void beforeScenario(Scenario scenario) {
-        ScenarioContext.setScenario(scenario);
-        base = new login_base();
-        base.initializeDriver();
-        loginPage = new login_imp(base.getDriver());
-    }
-
-    @After
-    public void afterScenario() {
-        ScenarioContext.clear();
-        base.quitDriver();
+    @Before(order = 1)
+    public void setupLoginPage() {
+        loginPage = new login_imp(Hooks.getBase().getDriver());
     }
 
     @Given("the user opens the browser and navigates to the CRM application URL")
