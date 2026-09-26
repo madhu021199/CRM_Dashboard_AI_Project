@@ -664,27 +664,27 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": ""
+      "value": "https://api.crm.osllc.us"
     },
     {
       "key": "loginEndpoint",
-      "value": ""
+      "value": "/api/auth/login"
     },
     {
       "key": "validUsername",
-      "value": ""
+      "value": "demo"
     },
     {
       "key": "validPassword",
-      "value": ""
+      "value": "5555"
     },
     {
       "key": "invalidUsername",
-      "value": ""
+      "value": "nonexistent_user@example.com"
     },
     {
       "key": "invalidPassword",
-      "value": ""
+      "value": "WrongPass999!"
     },
     {
       "key": "authToken",
@@ -692,7 +692,7 @@
     },
     {
       "key": "company_id",
-      "value": ""
+      "value": 12
     }
   ]
 }
