@@ -263,7 +263,7 @@ public class company_imp {
     private void selectDropdownOption(By dropdownLocator, By searchInputLocator, String optionText) {
         click(dropdownLocator);
         type(searchInputLocator, optionText);
-        By option = By.xpath("//div[contains(@class,'ant-select-item-option-content') and normalize-space()='" + optionText + "']");
+        By option = By.xpath("//div[@class='ant-select-item-option-content' and text()='" + optionText + "']");
         click(option);
     }
 
