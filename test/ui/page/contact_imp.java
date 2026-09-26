@@ -93,7 +93,7 @@ public class contact_imp {
         // Use a longer wait specifically for the address step transition
         try {
             WebElement element = new WebDriverWait(driver, Duration.ofSeconds(15))
-                    .until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#presentAddress")));
+                    .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//label[@title='Present address']")));
             boolean result = element.isDisplayed();
             takeScreenshot("contact_step_07_on_address_step");
             return result;

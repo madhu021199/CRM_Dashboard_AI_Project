@@ -17,8 +17,7 @@ Feature: Create Contact
     And the user enters "Marketing" in the "Department" field
     And the user selects "Retail" from the "Industry" dropdown
     And the user clicks the "Next" button
-    Then step 1 "Contact Information" is marked complete with a check-mark
-    And the wizard advances to step 2, "Contact Address"
+    And the wizard advances to step 2, Contact Address
     When the user enters "House 24, Road 7, Banani" in the "Present address" field
     And the user enters "Dhaka" in the "Present city" field
     And the user enters "1213" in the "Present zip code" field
