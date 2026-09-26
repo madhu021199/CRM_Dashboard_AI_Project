@@ -114,7 +114,7 @@ public class contact_imp {
 
 
     public void clickSubmit() {
-        click(By.xpath("//button[@type='submit']"));
+        driver.findElement(By.xpath("//button[@type='submit']")).click();
         takeScreenshot("contact_step_08_submit_clicked");
     }
 
