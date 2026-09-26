@@ -114,7 +114,7 @@ public class contact_imp {
 
 
     public void clickSubmit() {
-        click(By.xpath("//button[normalize-space()='Submit']"));
+        click(By.xpath("//button[@type='submit']"));
         takeScreenshot("contact_step_08_submit_clicked");
     }
 
