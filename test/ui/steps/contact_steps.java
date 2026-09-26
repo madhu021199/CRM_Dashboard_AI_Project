@@ -100,7 +100,7 @@ public class contact_steps {
         Assert.assertTrue("Contact Information step is not complete", true);
     }
 
-    @And("the wizard advances to step 2, \"Contact Address\"")
+    @And("the wizard advances to step 2, Contact Address")
     public void the_wizard_advances_to_step_2_contact_address() {
         Assert.assertTrue("Wizard did not advance to Contact Address", contactPage.isWizardOnAddressStep());
     }
