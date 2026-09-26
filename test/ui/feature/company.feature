@@ -31,15 +31,3 @@ Feature: CRM Company Management
 #    When the user enters only blank spaces "   " into the Company Name field and clicks "Next"
 #    Then the input is treated as empty and the mandatory field validation error is displayed again
 #    When the user enters "GreenFields A", a Company Name that already exists, and clicks "Next"
-#    Then a duplicate name validation error is displayed and the form is not submitted
-#    When the user changes the Company Name to the unique value "Quantum Edge Pvt Ltd"
-#    And leaves the "Industry" and "Company Type" dropdowns unselected
-#    And clicks "Next"
-#    Then validation errors are displayed for the unselected mandatory "Industry" and "Company Type" fields
-#    When the user selects valid values for "Industry" and "Company Type"
-#    And enters an invalid Website URL "htp//quantumedge"
-#    And enters an invalid Phone number "ABC123"
-#    And clicks "Next"
-#    Then invalid format validation errors are displayed for both the "Website" and "Phone" fields
-#    And the user remains on the "Company Information" step
-#    And no company record is created or added to the Company list at any point in this flow
