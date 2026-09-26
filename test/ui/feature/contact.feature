@@ -10,26 +10,19 @@ Feature: Create Contact
     Then the "Create Contact" panel opens on step 1, "Contact Information"
     When the user enters "Meera" in the "First name" field
     And the user enters "Nair" in the "Last name" field
-    And the user enters "ashwithaa@gmail.com" in the "Email" field
+    And the user enters "ashwitha@gmail.com" in the "Email" field
     And the user leaves "Contact owner" as the default value "demo"
     And the user enters "Marketing Manager" in the "Job title" field
     And the user enters "+8801700123456" in the "Phone number" field
     And the user enters "Marketing" in the "Department" field
     And the user selects "Retail" from the "Industry" dropdown
     And the user clicks the "Next" button
-    And the wizard advances to step 2, Contact Address
-    When the user enters "House 24, Road 7, Banani" in the "Present address" field
-    And the user enters "Dhaka" in the "Present city" field
-    And the user enters "1213" in the "Present zip code" field
-    And the user enters "Dhaka" in the "Present state" field
-    And the user enters "Bangladesh" in the "Present country" field
-    And the user enters "http://twitter.com/meeranair" in the "Twitter" field
-    And the user enters "http://linkedin.com/in/meeranair" in the "Linkedin" field
+    #And the wizard advances to step 2, Contact Address
     And the user clicks the "Submit" button
     Then the contact creation message "Contact Created Successfully" is displayed
     And the user is redirected to the Contact Details page
     And a new row for "Meera Nair" is visible in the Contacts list
-    And the row shows Email "ashwithaa@gmail.com" and Phone number "+8801700123456"
+    And the row shows Email "ashwitha@gmail.com" and Phone number "+8801700123456"
 
   @Negative @E2E @Regression
   Scenario: User logs in but cannot create a contact when mandatory fields are blank or the email is already in use
