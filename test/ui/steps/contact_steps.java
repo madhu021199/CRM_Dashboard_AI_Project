@@ -141,7 +141,8 @@ public class contact_steps {
     }
 
     @And("the user clicks the \"Submit\" button")
-    public void the_user_clicks_the_submit_button() {
+    public void the_user_clicks_the_submit_button() throws InterruptedException {
+        Thread.sleep(3000);
         contactPage.clickSubmit();
     }
 

@@ -10,7 +10,7 @@ Feature: Create Contact
     Then the "Create Contact" panel opens on step 1, "Contact Information"
     When the user enters "Meera" in the "First name" field
     And the user enters "Nair" in the "Last name" field
-    And the user enters "ashwitha@gmail.com" in the "Email" field
+    And the user enters "ashw@gmail.com" in the "Email" field
     And the user leaves "Contact owner" as the default value "demo"
     And the user enters "Marketing Manager" in the "Job title" field
     And the user enters "+8801700123456" in the "Phone number" field
@@ -22,7 +22,7 @@ Feature: Create Contact
     Then the contact creation message "Contact Created Successfully" is displayed
     And the user is redirected to the Contact Details page
     And a new row for "Meera Nair" is visible in the Contacts list
-    And the row shows Email "ashwitha@gmail.com" and Phone number "+8801700123456"
+    And the row shows Email "ashw@gmail.com" and Phone number "+8801700123456"
 
   @Negative @E2E @Regression
   Scenario: User logs in but cannot create a contact when mandatory fields are blank or the email is already in use
