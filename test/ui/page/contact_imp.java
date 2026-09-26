@@ -113,7 +113,8 @@ public class contact_imp {
     takeScreenshot("all fields are updated with vallues");}
 
 
-    public void clickSubmit() {
+    public void clickSubmit() throws InterruptedException {
+        Thread.sleep(3000);
         driver.findElement(By.xpath("//button[@type='submit']")).click();
         takeScreenshot("contact_step_08_submit_clicked");
     }
