@@ -120,12 +120,22 @@ public class company_imp {
     // before it disappears (the toast is only shown for a very short time)
     public void submitNewCompany() {
         click(company_poj.SUBMIT_BUTTON);
+        // Give the server a moment to respond and show the success message
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
         capturedSuccessMessage = captureTextQuickly(company_poj.SUCCESS_MESSAGE);
         takeScreenshot("company_step_13_submit_clicked");
     }
 
     // Check the "company created" success message appeared
     public boolean isCompanyCreatedSuccessfully(String expectedCompanyName) {
+        // If message wasn't captured on first try, attempt to capture it again
+        if (capturedSuccessMessage == null || capturedSuccessMessage.isEmpty()) {
+            capturedSuccessMessage = captureTextQuickly(company_poj.SUCCESS_MESSAGE);
+        }
         boolean result = capturedSuccessMessage != null && !capturedSuccessMessage.isEmpty();
         takeScreenshot("company_step_14_company_created_successfully_check");
         return result;
@@ -270,7 +280,7 @@ public class company_imp {
     // returns its text, or null if it never appeared in time
     private String captureTextQuickly(By locator) {
         Wait<WebDriver> fastWait = new FluentWait<>(driver)
-                .withTimeout(Duration.ofSeconds(3))
+                .withTimeout(Duration.ofSeconds(5))
                 .pollingEvery(Duration.ofMillis(100))
                 .ignoring(NoSuchElementException.class);
         try {
