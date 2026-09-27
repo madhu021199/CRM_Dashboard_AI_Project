@@ -31,6 +31,7 @@ public class company_imp {
     // Log in first using the existing login page methods
     public void loginToCrmApplication() throws InterruptedException {
         loginPage.openLoginPage();
+        Thread.sleep(4000);
         loginPage.enterValidUsernameAndPassword();
         loginPage.clickSignIn();
         takeScreenshot("company_step_01_logged_in");
