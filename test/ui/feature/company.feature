@@ -28,6 +28,6 @@ Feature: CRM Company Management
     Then the "Create Company" pop-up opens showing the "Company Information" step
     When the user clicks "Next" without entering a Company Name
     Then a mandatory field validation error is displayed for "Company Name" and the form is not submitted
-#    When the user enters only blank spaces "   " into the Company Name field and clicks "Next"
-#    Then the input is treated as empty and the mandatory field validation error is displayed again
+    When the user enters only blank spaces "   " into the Company Name field and clicks "Next"
+    Then the input is treated as empty and the mandatory field validation error is displayed again
 #    When the user enters "GreenFields A", a Company Name that already exists, and clicks "Next"
